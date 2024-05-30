@@ -1,28 +1,36 @@
 [build-system]
-requires = ["setuptools", "flit_core >=2,<4"]
-build-backend = "setuptools.build_meta"
+requires = ["flit_core >=3.5,<4"]
+build-backend = "flit_core.buildapi"
 
-[tool.flit.metadata]
-module = "sphinxcontrib-kroki"
-author = "Martin Hasoň"
-author-email = "martin.hason@gmail.com"
-home-page = "https://github.com/sphinx-contrib/kroki"
-description-file = "README.md"
-classifiers = ["License :: OSI Approved :: MIT License"]
-requires-python = ">=3.6"
-requires = [
-    "sphinx",
-    "requests>=2.4.2",
+[project]
+name = "sphinxcontrib.kroki"
+readme = "README.md"
+requires-python = ">=3.8"
+license = {file="LICENSE"}
+
+dynamic = ["version", "description"]
+
+authors = [
+    {name = "Martin Hasoň", email = "martin.hason@gmail.com"}
 ]
 
-[tool.flit.metadata.requires-extra]
+classifiers = ["License :: OSI Approved :: MIT License"]
+dependencies = [
+    "sphinx",
+    "pyyaml",
+    "requests>=2.4.2"
+]
+
+[project.urls]
+Homepage = "https://github.com/sphinx-contrib/kroki"
+
+[project.optional-dependencies]
 code = ["black", "flake8", "mypy"]
 test = [
     "coverage",
     "pytest",
     "pytest-cov",
 ]
-extra = []
 
 [tool.pytest.ini_options]
 markers = [
@@ -31,3 +39,4 @@ markers = [
 
 [tool.black]
 line-length = 79
+target-version = ["py38"]
