@@ -6,6 +6,8 @@
 
 import re
 import pytest
+import responses
+import requests
 from sphinx.application import Sphinx
 from sphinx.testing.path import path
 
@@ -47,3 +49,32 @@ def test_kroki_html(app, status, warning):
 
     html = r'<img.*?class="kroki kroki-ditaa align-right".*?/>'
     assert re.search(html, content, re.S)
+
+
+@pytest.mark.sphinx(
+    "html", 
+    testroot="kroki", 
+    confoverrides={
+        "master_doc": "index",
+        "kroki_use_placeholder_on_request_error": True
+    }
+)
+@responses.activate
+def test_kroki_placeholder_on_error(app, status, warning):
+    # Mock a request exception
+    responses.add(
+        responses.POST, 
+        re.compile(r'https://kroki\.io.*'), 
+        body=requests.RequestException("Connection error")
+    )
+    
+    # Build should complete without raising an exception
+    content = get_content(app)
+    
+    # All images should be rendered with the placeholder
+    assert "kroki kroki-plantuml" in content
+    assert "kroki kroki-mermaid" in content
+    assert "kroki kroki-graphviz" in content
+    
+    # Verify warning messages are logged
+    assert "Connection error" in warning.getvalue()

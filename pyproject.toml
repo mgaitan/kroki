@@ -30,6 +30,7 @@ test = [
     "coverage",
     "pytest",
     "pytest-cov",
+    "responses",
 ]
 
 [tool.pytest.ini_options]

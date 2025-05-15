@@ -7,6 +7,7 @@ from .util import logger
 from .kroki import kroki, render_kroki, KrokiError
 from sphinx.transforms import SphinxTransform
 from sphinx.locale import __
+import requests
 
 
 class KrokiToImageTransform(SphinxTransform):
@@ -50,6 +51,10 @@ class KrokiToImageTransform(SphinxTransform):
                 prefix,
             )
         except KrokiError as exc:
+            # If the error was caused by a RequestException and we're using a placeholder,
+            # the render_kroki function already handled it and returned a placeholder image path.
+            # In that case, we won't get here. We'll only get here if it's another type of KrokiError
+            # or if placeholder use is disabled.
             logger.warning(
                 __("kroki %s diagram (%s) with source %r: %s"),
                 diagram_type,

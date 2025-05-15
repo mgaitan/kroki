@@ -1,4 +1,5 @@
 from hashlib import sha1
+import os
 from pathlib import Path
 from typing import Any, Dict, List, Optional, Union
 
@@ -274,6 +275,16 @@ def render_kroki(
 
         return outfn
     except requests.exceptions.RequestException as e:
+        if getattr(builder.config, 'kroki_use_placeholder_on_request_error', False):
+            # Use placeholder image instead of raising an error
+            placeholder_path = Path(__file__).parent / 'placeholder.jpg'
+            if placeholder_path.exists():
+                # Copy placeholder to the output directory with the expected name
+                with placeholder_path.open(mode="rb") as src_file:
+                    with outfn.open(mode="wb") as dest_file:
+                        dest_file.write(src_file.read())
+                return outfn
+        # If placeholder not enabled or not found, raise the original error
         raise KrokiError(__("kroki did not produce a diagram")) from e
     except IOError as e:
         raise KrokiError(

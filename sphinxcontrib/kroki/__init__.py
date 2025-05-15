@@ -20,5 +20,6 @@ def setup(app: Sphinx) -> Dict[str, Any]:
     app.add_config_value("kroki_url", "https://kroki.io", "env")
     app.add_config_value("kroki_output_format", "svg", "env")
     app.add_config_value("kroki_inline_svg", False, "env")
+    app.add_config_value("kroki_use_placeholder_on_request_error", False, "env")
 
     return {"version": __version__, "parallel_read_safe": True}
