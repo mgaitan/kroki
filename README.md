@@ -86,7 +86,7 @@ Configuration
 - `kroki_url` (default https://kroki.io).
 - `kroki_output_format` (default svg).
 - `kroki_inline_svg` (default False).
-- `kroki_use_placeholder_on_request_error` (default False) - When set to True, uses a placeholder image instead of raising an error when a request to the Kroki server fails.
+- `kroki_use_placeholder_on_request_error` (default False) - When set to True, uses a placeholder image instead of raising an error when a request to the Kroki server fails. The extension will try to find a placeholder file that matches the requested output format (e.g., `placeholder.svg` for svg output format).
 
 Alternatives
 ------------

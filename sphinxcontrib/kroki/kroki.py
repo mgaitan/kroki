@@ -1,11 +1,10 @@
+import shutil
 from hashlib import sha1
-import os
 from pathlib import Path
 from typing import Any, Dict, List, Optional, Union
 
 import requests
 import yaml
-
 from docutils.nodes import Element, General, Inline, Node
 from docutils.parsers.rst import directives
 from sphinx.builders import Builder
@@ -14,6 +13,8 @@ from sphinx.ext.graphviz import align_spec, figure_wrapper
 from sphinx.locale import __
 from sphinx.util.docutils import SphinxDirective
 from sphinx.util.i18n import search_image_for_language
+
+from .util import logger
 
 formats = ("png", "svg", "jpeg", "base64", "txt", "utxt")
 
@@ -277,13 +278,19 @@ def render_kroki(
     except requests.exceptions.RequestException as e:
         if getattr(builder.config, 'kroki_use_placeholder_on_request_error', False):
             # Use placeholder image instead of raising an error
-            placeholder_path = Path(__file__).parent / 'placeholder.jpg'
+            # Try to find a placeholder matching the requested output format
+            # First try the requested format
+            placeholder_path = Path(__file__).parent / f'placeholders/placeholder.{output_format}'
             if placeholder_path.exists():
                 # Copy placeholder to the output directory with the expected name
-                with placeholder_path.open(mode="rb") as src_file:
-                    with outfn.open(mode="wb") as dest_file:
-                        dest_file.write(src_file.read())
+                shutil.copy(placeholder_path, outfn)
                 return outfn
+
+            # Log that we couldn't find an appropriate placeholder
+            logger.warning(
+                __("No placeholder found for format %s, error will be raised"),
+                output_format
+            )
         # If placeholder not enabled or not found, raise the original error
         raise KrokiError(__("kroki did not produce a diagram")) from e
     except IOError as e:
