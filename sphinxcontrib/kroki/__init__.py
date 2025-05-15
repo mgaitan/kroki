@@ -11,7 +11,7 @@ from sphinx.application import Sphinx
 from .kroki import Kroki
 from .transform import KrokiToImageTransform
 
-__version__ = "1.3.1"
+__version__ = "1.4"
 
 
 def setup(app: Sphinx) -> Dict[str, Any]:
